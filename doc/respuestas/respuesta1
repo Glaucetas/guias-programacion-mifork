@@ -4,6 +4,7 @@ TEMA 1. Clases y objetos
 -Encapsulamiento: Agrupación de datos y métodos en una sola unidad (la clase) y la restricción del acceso directo a los datos para proteger la integridad del objeto.
 -Herencia: Mecanismo por el cual una clase (hija) adquiere las propiedades y comportamientos de otra (padre), facilitando la reutilización de código.
 -Polimorfismo: Capacidad de que una misma operación se comporte de manera distinta según el objeto que la realice (por ejemplo, el método dibujar() funciona distinto en un Círculo que en un Cuadrado).
+-composición: 
 2. Cita cuatro lenguajes populares que permitan la programación orientada a objetos
 Java, Python, C++, C#
 3. Los paradigmas anteriores a la POO, ¿Qué es la programación estructurada? y, todavía mejor, ¿Qué es la programación modular?
