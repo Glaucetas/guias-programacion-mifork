@@ -1,0 +1,115 @@
+TEMA 2. Encapsulación
+1. Respuesta: Buscan agrupar datos y comportamientos, protegiendo el estado interno del objeto de accesos indebidos o accidentales. Ventajas: Facilidad de mantenimiento, mayor flexibilidad para cambiar la implementación interna sin romper código externo y protección de la integridad de los datos.
+
+2. Respuesta: Es el conjunto de métodos y atributos accesibles desde el exterior de la clase (los marcados como public). Se relaciona con la ocultación porque la interfaz es el "contrato" que el objeto ofrece al mundo, mientras que los detalles de cómo funciona ese contrato permanecen ocultos (privados).
+
+3. Respuesta: Porque una vez que otros programadores usan tu interfaz pública, cambiarla (borrar un método o cambiar sus parámetros) romperá todo el código que dependía de ella. No es fácil cambiarla sin causar errores en cascada; por eso debe ser mínima y bien pensada.
+
+4. Respuesta: Son condiciones o reglas que deben cumplirse siempre para que un objeto sea válido (ej: que la edad nunca sea negativa). La ocultación ayuda porque, al hacer el atributo privado, obligamos a pasar por un método que valide que la regla se cumple antes de modificar el dato.
+
+5. Respuesta:
+public class Punto {
+    private double x; // Ocultación
+    private double y;
+
+    public double calcularDistanciaAOrigen() { // Interfaz pública
+        return Math.sqrt(x * x + y * y);
+    }
+}
+
+Interfaz pública: El método calcularDistanciaAOrigen. Public: Accesible desde cualquier clase. Private: Solo accesible desde dentro de la propia clase.
+
+6. Respuesta: Se aplican a los miembros de la clase (atributos y métodos) y a las clases mismas (aunque con reglas específicas para clases externas).
+
+7. Respuesta: Sí. En Java existen: protected (accesible por subclases y mismo paquete) y el nivel por defecto (sin palabra clave, accesible solo por el mismo paquete). En otros lenguajes como C++, existe también protected. En Python, la privacidad es por convención usando guiones bajos (_ o __).
+
+8. Respuesta: La respuesta correcta es la (a). Los miembros privados son visibles para otras instancias de la misma clase.
+public double calcularDistanciaAPunto(Punto otro) {
+    // Puedo acceder a otro.x aunque sea privado porque soy de la misma clase
+    double dx = this.x - otro.x; 
+    double dy = this.y - otro.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+9. Respuesta: Los getters son métodos que retornan el valor de un atributo privado. Los setters son métodos que permiten modificar el valor de un atributo privado, permitiendo añadir lógica de validación.
+
+10. Respuesta: No. Se refiere a la robustez del código. Evita que el estado interno del programa sea corrompido por usos accidentales o incorrectos desde fuera de la clase, asegurando que el objeto siempre sea consistente.
+
+11. Respuesta: Un miembro de instancia pertenece a cada objeto (cada uno tiene su copia); un miembro de clase (static) pertenece a la clase y es compartido por todos. Sí, los miembros de clase también se pueden ocultar marcándolos como private static.
+
+12. Respuesta: Sí. Se usa en patrones de diseño como el Singleton (para asegurar que solo exista una instancia) o cuando se ofrecen métodos factoría y no se quiere permitir la creación directa con new.
+
+13. Respuesta: Se indican con la palabra static.
+public class Punto {
+    private double x, y;
+    private static double xMax = Double.MIN_VALUE;
+    private static double yMax = Double.MIN_VALUE;
+
+    public Punto(double x, double y) {
+        this.x = x;
+        this.y = y;
+        if (x > xMax) xMax = x;
+        if (y > yMax) yMax = y;
+    }
+}
+
+14. Respuesta: 
+public static Punto crearPuntoRedondeado(double x, double y) 
+{ 
+  return new Punto(Math.round(x), Math.round(y)); 
+}
+
+Sí, he usado `static` porque el método debe poder llamarse sin necesidad de tener una instancia previa del punto.
+
+15. Respuesta:
+public class Punto {
+    private double[] coords = new double[2]; // Implementación interna cambiada
+
+    public void setX(double x) { coords[0] = x; }
+    public double getX() { return coords[0]; }
+    // La interfaz pública (getters/setters) sigue pareciendo igual al exterior
+}
+16. Respuesta: No. Aunque tenga ambos, el usar métodos permite que en el futuro puedas añadir validaciones o cambiar cómo se almacena el dato (como en la pregunta 15) sin que el resto del programa se entere. La convención habitual es que los atributos sean siempre privados. Esto protege las invariantes de clase.
+
+17. Respuesta: Una clase es inmutable si su estado no puede cambiar tras ser creada. Un método modificador es aquel que cambia el estado del objeto; no siempre es un "setter" (ej: vaciarDeposito()). Ventajas: Son intrínsecamente seguros para hilos (thread-safe), fáciles de compartir y de probar.
+
+18. Respuesta: No. Solo deben incluirse si es estrictamente necesario que el atributo sea modificado desde fuera. Menos setters suelen llevar a diseños más robustos y objetos más estables.
+
+19. Respuesta: Es inmutable. Al concatenar, no se modifica la cadena original, se crea una cadena nueva en memoria. Si se van a hacer muchas concatenaciones, se debe usar la clase StringBuilder.
+
+20. Respuesta: Por defecto, los objetos se comparan por identidad (dirección de memoria) usando ==. El método equals en Java sirve para comparar por contenido. Por defecto, equals hace lo mismo que == (identidad), por lo que hay que sobrescribirlo. Las cadenas en Java se comparan siempre con .equals().
+
+21. Respuesta: Son clases que "envuelven" tipos primitivos para que actúen como objetos (ej: Integer para int). En Java el proceso es automático (Autoboxing). Ventajas: permiten usar primitivos en colecciones y aportan métodos de utilidad. No todos los lenguajes los necesitan; en Python o Ruby, todo es un objeto desde el principio.
+
+22. Respuesta: Es un tipo que define un conjunto fijo de constantes. En Java, los enum son clases especiales. Ventajas: permiten añadir atributos y métodos, garantizan que solo existan los valores definidos y aportan seguridad de tipos (type-safety).
+
+23. Respuesta:
+public enum Mes {
+    ENERO(31, 1), FEBRERO(28, 2), MARZO(31, 3), ABRIL(30, 4),
+    MAYO(31, 5), JUNIO(30, 6), JULIO(31, 7), AGOSTO(31, 8),
+    SEPTIEMBRE(30, 9), OCTUBRE(31, 10), NOVIEMBRE(30, 11), DICIEMBRE(31, 12);
+
+    private final int dias;
+    private final int ordinal;
+
+    Mes(int dias, int ordinal) {
+        this.dias = dias;
+        this.ordinal = ordinal;
+    }
+
+    public int getDias() { return dias; }
+    public int getOrdinal() { return ordinal; }
+
+    public boolean esDePrimavera(boolean norte) {
+        return norte ? (ordinal >= 3 && ordinal <= 5) : (ordinal >= 9 && ordinal <= 11);
+    }
+    public boolean esDeVerano(boolean norte) {
+        return norte ? (ordinal >= 6 && ordinal <= 8) : (ordinal == 12 || ordinal <= 2);
+    }
+    public boolean esDeOtoño(boolean norte) {
+        return norte ? (ordinal >= 9 && ordinal <= 11) : (ordinal >= 3 && ordinal <= 5);
+    }
+    public boolean esDeInvierno(boolean norte) {
+        return norte ? (ordinal == 12 || ordinal <= 2) : (ordinal >= 6 && ordinal <= 8);
+    }
+}
