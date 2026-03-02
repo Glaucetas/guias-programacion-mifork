@@ -15,6 +15,16 @@ float raiz(float n, int *error) {
 2. Respuesta: Una excepción es un evento que interrumpe el flujo normal de las instrucciones de un programa. El objetivo es separar el código de la lógica de negocio del código de 
 gestión de errores, permitiendo que el error sea manejado en el nivel jerárquico más adecuado.
 
+---clase---
+Excepción: es una situación atípica 
+-Errores.
+    --De entrada de usuarios (de validación)
+    --De programación.
+    --De entorno (E/S).
+-Al implementar una funcion, puedo lanzarla.
+-Al llamar a funciones puedo capturarlas.
+
+
 3.Respuesta:
 public class Calculadora {
     public double raiz(double n) {
@@ -48,6 +58,12 @@ Sí, podemos crear nuestras propias clases extendiendo de Exception o RuntimeExc
 7. Respuesta: Información como el mensaje de error descriptivo, el StackTrace (traza de la pila que indica exactamente en qué línea y fichero ocurrió el fallo) y, opcionalmente, 
 la causa (otra excepción anidada).
 
+---clase---
+Tres elementos tienen un objeto Excepción
+-Un mensaje.
+-Una traza de llamadas.
+-Opcionalmente, otra excepción causa...
+
 8. Respuesta: Sí, se pueden tener múltiples bloques catch. Sin embargo, solo se ejecuta uno: el primero cuyo tipo de excepción coincida con la lanzada.
 
 9. Respuesta: Se usa el bloque finally.
@@ -76,9 +92,11 @@ public void abrirFichero(String ruta) throws IOException {
     }
 }
 
-14. Respuesta: Se puede, pero es innecesario y no se recomienda, ya que las RuntimeException se propagan implícitamente. El llamador no está obligado a poner try-catch. Solo tendría sentido como documentación para advertir al programador.
+14. Respuesta: Se puede, pero es innecesario y no se recomienda, ya que las RuntimeException se propagan implícitamente. El llamador no está obligado a poner try-catch. 
+Solo tendría sentido como documentación para advertir al programador.
 
-15. Respuesta: Se recomiendan controladas para errores que un usuario podría corregir (ej: reintentar una conexión). No controladas para errores que indican que el programador cometió un error (ej: pasar un argumento inválido). En lenguajes como C# o Python solo existen las no controladas (es la tendencia moderna).
+15. Respuesta: Se recomiendan controladas para errores que un usuario podría corregir (ej: reintentar una conexión). No controladas para errores que indican que el programador 
+cometió un error (ej: pasar un argumento inválido). En lenguajes como C# o Python solo existen las no controladas (es la tendencia moderna).
 
 16. Respuesta: Sí. Se puede relanzar la misma o una nueva.
 
