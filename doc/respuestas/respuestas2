@@ -150,6 +150,11 @@ entere. La convención habitual es que los atributos sean siempre privados. Esto
 Una clase es inmutable si su estado no puede cambiar tras ser creada. Un método modificador es aquel que cambia el estado del objeto; no siempre es un "setter" (ej: vaciarDeposito()). 
 Ventajas: Son intrínsecamente seguros para hilos (thread-safe), fáciles de compartir y de probar.
 
+---clase---
+ventajas: 
+-Más fáciles de entender, menos errores.
+-Mejor en concurrencia.
+
 18. Respuesta: 
 No. Solo deben incluirse si es estrictamente necesario que el atributo sea modificado desde fuera. Menos setters suelen llevar a diseños más robustos y objetos más estables.
 
@@ -160,13 +165,47 @@ Es inmutable. Al concatenar, no se modifica la cadena original, se crea una cade
 Por defecto, los objetos se comparan por identidad (dirección de memoria) usando ==. El método equals en Java sirve para comparar por contenido. Por defecto, equals hace lo mismo 
 que == (identidad), por lo que hay que sobrescribirlo. Las cadenas en Java se comparan siempre con .equals().
 
+---clase---
+Igualdad a nivel de objeto
+-Por identidad--->misma dirección de memoria || java: Libro l1 = new Libro("Quijote")  Libro l2 = new Libro("Quijote")  if(l1==l2) seria falso.
+-Por contenido--->mismo estado || Se usaría "equals", siempre y cuando este implementado para comparar por contenido if(l1.equals(l2)) 
+
+Equals:
+-Está en todas las clases
+-Por defecto, hace comparacion por identidad
+-En las clases que asi lo implementen, hace comparacion por contenido, por ejemplo String. Normalmente querras coparar tus String con equals
+
 21. Respuesta: 
 Son clases que "envuelven" tipos primitivos para que actúen como objetos (ej: Integer para int). En Java el proceso es automático (Autoboxing). Ventajas: permiten usar primitivos en 
 colecciones y aportan métodos de utilidad. No todos los lenguajes los necesitan; en Python o Ruby, todo es un objeto desde el principio.
 
+---clase---
+Wrapper:
+-Se suelen ver en lenguajes orientado a objeto OO que tienen tipos primitivos
+-Clases para envolver valores primitivos y darles la ventaje de la orientacion a objetos 
+
+int <----> Integer, float <----> Float, char <----> Character, boolean <----> Boolean
+
+Ventajas:
+-Tienen métodos utiles ---> Integer.parseInt(String);
+-Pueden ser usados en contextos donde se necesiten objetos, Ejemplo: List<Integer>
+
+Integer i = 7: //Autoboxing
+Integer i = new Integer(7); //Sin autoUnboxing
+
+int j = i; //Autoboxing
+int j = i.intValue(); 
+
 22. Respuesta: 
 Es un tipo que define un conjunto fijo de constantes. En Java, los enum son clases especiales. Ventajas: permiten añadir atributos y métodos, garantizan que solo existan los valores 
 definidos y aportan seguridad de tipos (type-safety).
+
+---clase---
+Enumerados:
+-Es un tipo cuyos valores son finitos y conocidos de antemano
+-En java, un enumerado es una clase, pero:
+    --Las instancias que tiene: Son finitas y conocidas de antemano.
+    --___pero tambien es una clase___
 
 23. Respuesta:
 public enum Mes {
