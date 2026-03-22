@@ -1,0 +1,127 @@
+1. Respuesta:
+struct Punto {
+    double x, y;
+};
+
+struct Linea {
+    struct Punto p1, p2;
+};
+
+double distancia(struct Punto a, struct Punto b) {
+    return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
+}
+
+double longitud(struct Linea l) {
+    return distancia(l.p1, l.p2);
+}
+2. Respuesta:
+public final class Punto {
+    private final double x, y; // Inmutable
+
+    public Punto(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public double distanciaA(Punto otro) {
+        return Math.sqrt(Math.pow(otro.x - this.x, 2) + Math.pow(otro.y - this.y, 2));
+    }
+}
+
+public final class Linea {
+    private final Punto inicio, fin; // Composición inmutable
+
+    public Linea(Punto inicio, Punto fin) {
+        this.inicio = inicio;
+        this.fin = fin;
+    }
+
+    public double getLongitud() {
+        return inicio.distanciaA(fin);
+    }
+}
+3. Respuesta: 
+La multiplicidad indica cuántos objetos de una clase participan en la relación con un objeto de la otra clase.
+
+De Linea a Punto: 1 a 2 (Una línea tiene exactamente 2 puntos).
+
+De Punto a Linea: 1 a 0..* (Un punto puede formar parte de ninguna o de muchas líneas).
+
+4. Respuesta:
+
+Composición Fuerte ("Composición"): El objeto contenido no tiene sentido sin el contenedor. Si el contenedor se destruye, el contenido también. (Ej: Una mano y sus dedos).
+
+Composición Débil ("Agregación"): El objeto contenido puede existir fuera del contenedor. El ciclo de vida es independiente. (Ej: Un profesor y un departamento).
+
+Consecuencia: En la fuerte, el contenedor suele crear al contenido. En la débil, el contenido se suele pasar como parámetro ya creado.
+
+5. Respuesta: Hablamos de dependencia (o "usa-un"). Es la relación más débil, ya que la clase no "guarda" a la otra como un atributo, solo la necesita puntualmente para realizar una tarea.
+
+6. Respuesta:
+
+Fuerte: public Linea(double x1, double y1, double x2, double y2) { this.p1 = new Punto(x1, y1); ... } (La línea fabrica sus propios puntos).
+
+Débil: public Linea(Punto p1, Punto p2) { this.p1 = p1; this.p2 = p2; } (La línea recibe puntos que ya existían fuera).
+
+7. Respuesta: Java usa el Garbage Collector. Cuando el objeto Linea deja de ser referenciado, sus atributos (los Punto) también pierden esa referencia. Si nadie más en el programa está usando esos puntos, 
+el recolector de basura los libera automáticamente. No hace falta un destructor manual como en C++.
+
+8. Respuesta:
+public class Departamento {
+    private Profesor[] profesores = new Profesor[50];
+    private int numProfesores = 0;
+    private Profesor director;
+
+    public Departamento(Profesor director) {
+        if (director == null) throw new IllegalArgumentException("El director es obligatorio");
+        this.director = director;
+        addProfesor(director);
+    }
+
+    public void addProfesor(Profesor p) {
+        if (numProfesores >= 50) throw new IllegalStateException("Departamento lleno");
+        profesores[numProfesores++] = p;
+    }
+
+    public void eliminarProfesor(int pos) {
+        if (pos < 0 || pos >= numProfesores) throw new IndexOutOfBoundsException();
+        if (profesores[pos] == director) throw new IllegalStateException("No puedes eliminar al director");
+        // Desplazar array
+        for (int i = pos; i < numProfesores - 1; i++) profesores[i] = profesores[i+1];
+        profesores[--numProfesores] = null;
+    }
+
+    public void setDirector(Profesor nuevo) {
+        if (nuevo == null) throw new IllegalArgumentException("Director nulo");
+        boolean existe = false;
+        for (int i=0; i<numProfesores; i++) if(profesores[i] == nuevo) existe = true;
+        if (!existe) throw new IllegalArgumentException("El director debe ser del departamento");
+        this.director = nuevo;
+    }
+}
+
+9. Respuesta: Usando List<Profesor> profesores = new ArrayList<>().
+
+Ahorro: Te ahorras la gestión manual del tamaño del array, el contador numProfesores y el código para desplazar elementos al borrar.
+
+Problema de seguridad: Si devuelves la lista interna, el usuario puede borrar profesores desde fuera sin pasar por tus reglas de validación.
+
+Solución: Devolver una copia de la lista o una vista no modificable (Collections.unmodifiableList).
+
+10. Respuesta:
+public class Persona {
+    private final String nombre;
+    private final Persona madre; // Composición recursiva
+
+    public Persona(String nombre, Persona madre) {
+        this.nombre = nombre;
+        this.madre = madre;
+    }
+}
+// Main: Persona abuela = new Persona("Ana", null);
+//       Persona madre = new Persona("Eva", abuela);
+//       Persona nieto = new Persona("Leo", madre);
+Otros ejemplos: Directorios que contienen otros Directorios, o Nodos en una estructura de Árbol.
+
+11. Respuesta: Significa que ambos objetos se conocen entre sí. El Departamento tiene una lista de Profesor, y cada Profesor tiene un atributo que apunta a su Departamento. 
+Para implementarlo, al añadir un profesor al departamento, habría que actualizar también el atributo "miDepartamento" dentro del objeto profesor.
