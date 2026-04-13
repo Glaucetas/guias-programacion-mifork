@@ -125,3 +125,10 @@ Otros ejemplos: Directorios que contienen otros Directorios, o Nodos en una estr
 
 11. Respuesta: Significa que ambos objetos se conocen entre sí. El Departamento tiene una lista de Profesor, y cada Profesor tiene un atributo que apunta a su Departamento. 
 Para implementarlo, al añadir un profesor al departamento, habría que actualizar también el atributo "miDepartamento" dentro del objeto profesor.
+
+---clase---
+Problema bidireccional:
+Exige tener cuidado al programar para mantener la consistencia.
+Ej:Añadir un profesor a un departamente y que solo se guarde en Departamento,
+sol1:Que cada método modificador llame al otro y evitar ciclos.
+sol2:Solo dejar visible a tercero, uno de los metodos modificadores.
