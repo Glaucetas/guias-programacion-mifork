@@ -26,6 +26,14 @@ public class Artillero extends Soldado {
         this.cohetes = cohetes;
     }
     public int getCohetes() { return cohetes; }
+
+    public void disparar(){
+        if(cohetes-- > 0) {
+            System.out.println("Disparando");
+        } else {
+            System.out.println("Sin municion");
+        }
+    }
 }
 
 public class Zapador extends Soldado {
@@ -36,6 +44,14 @@ public class Zapador extends Soldado {
         this.minas = minas;
     }
     public int getMinas() { return minas; }
+
+    public void ponerMina(){
+        if(minas-- > o){
+            System.out.println("Colocando mina"):
+        } else {
+            System.out.println("No quedan minas");
+        }
+    }
 }
 
 // Main para probar la compatibilidad de tipos
