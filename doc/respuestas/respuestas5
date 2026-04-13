@@ -1,0 +1,176 @@
+1. Polimorfismo y Sobrescritura
+
+Polimorfismo: Proviene del griego "muchas formas". En programación, es la capacidad de tratar objetos de distintas clases "hijas" a través de una referencia de su clase "padre" común, y que al llamar a un método, cada objeto responda de la forma específica en que fue programado. Sirve para escribir código genérico y extensible (ej. un bucle que mueve cientos de figuras geométricas distintas sin saber exactamente qué figura es cada una).
+
+Sobrescritura (Overriding): Es el mecanismo que hace posible el polimorfismo. Consiste en que una clase hija vuelve a escribir un método que ya existía en su clase padre (con exactamente el mismo nombre y parámetros) para cambiar o adaptar su comportamiento.
+
+2. Ligadura Dinámica (Enlace Tardío)
+
+¿Qué es? Cuando el compilador ve soldado.saludar(), no sabe qué código ejecutar porque soldado podría ser un Artillero o un Zapador. La "ligadura dinámica" significa que el programa espera hasta el tiempo de ejecución (cuando el programa ya está corriendo) para mirar qué objeto hay realmente en la memoria y enlazar la llamada a la versión correcta del método.
+
+C++ vs Java vs Python:
+
+Java: La ligadura dinámica viene activada "por defecto" para todos los métodos (salvo que sean static, final o private).
+
+C++: Hay que pedirla explícitamente. Si no pones la palabra clave virtual delante del método en la clase padre, C++ usará ligadura estática (ejecutará siempre el método del padre, arruinando el polimorfismo).
+
+Python: Es puramente dinámico por naturaleza ("Duck typing"). Ni siquiera le importan las jerarquías de clases estables; si el objeto en memoria tiene un método con ese nombre en tiempo de ejecución, lo ejecuta.
+
+3. Ejemplo básico de Polimorfismo
+
+public class Soldado {
+    public void saludar() {
+        System.out.println("¡Soldado listo para la acción!");
+    }
+}
+
+public class Artillero extends Soldado {
+    // Hereda saludar() tal cual, no lo sobrescribe
+}
+
+public class Zapador extends Soldado {
+    @Override
+    public void saludar() {
+        System.out.println("¡Zapador listo! Cuidado por donde pisa.");
+    }
+}
+
+// Clase Main
+public class Main {
+    public static void main(String[] args) {
+        // Array de tipo PADRE, conteniendo objetos HIJOS
+        Soldado[] peloton = {
+            new Soldado(),
+            new Zapador(),
+            new Artillero() 
+        };
+
+        // Polimorfismo en acción
+        for (Soldado s : peloton) {
+            s.saludar(); // Cada uno responde a su manera
+        }
+    }
+}
+4. Invocar al método base (super)
+Sí, puedes aprovechar el código del padre para no repetirlo. Se usa la palabra clave super.
+
+public class Zapador extends Soldado {
+    @Override
+    public void saludar() {
+        super.saludar(); // Llama al saludo normal del padre
+        System.out.println("¡ZAPADOR A SUS ORDENES!"); // Añade lo suyo
+    }
+}
+5. Restricciones, Sobrescritura vs Sobrecarga y @Override
+
+Restricciones al sobrescribir: 1. El nombre y los parámetros deben ser idénticos.
+2. El tipo de retorno debe ser el mismo (o un subtipo, lo que se llama "retorno covariante").
+3. No puedes hacer el método más privado de lo que era en el padre (ej. pasar de public a protected).
+
+Sobrescritura (Overriding) vs Sobrecarga (Overloading):
+
+Sobrescritura: Misma firma, ocurre entre Padre e Hijo (Herencia).
+
+Sobrecarga: Mismo nombre pero distintos parámetros, ocurre dentro de la misma clase.
+
+@Override: Es una anotación (una etiqueta) para el compilador. Si te equivocas al escribir el nombre (ej. pones saludarr()), sin la etiqueta Java pensará que estás creando un método nuevo. Con la etiqueta, el compilador te dará error avisando: "Oye, dijiste que ibas a sobrescribir algo del padre, pero no lo encuentro".
+
+6. Polimorfismo desde el día 1 en Java
+Sí. Como todas las clases en Java heredan de Object, cuando sobrescribes el método toString() de tu clase, estás usando polimorfismo. Cuando haces System.out.println(miObjeto), el sistema usa una referencia de tipo Object para llamar al método toString() de tu clase específica gracias a la ligadura dinámica.
+
+7. Clases y Métodos Abstractos
+
+Clase abstracta: Es una clase "a medio hacer" o demasiado genérica. No se pueden crear objetos (instancias) de ella usando new. Sirve como plantilla obligatoria para sus hijos.
+
+Método abstracto: Es un método que solo se define (su firma), pero no tiene cuerpo (no tiene llaves {}). Obliga a las clases hijas a programar ese método.
+
+// Se pone abstract en la clase
+public abstract class Soldado {
+    public void saludar() { System.out.println("Hola"); } // Método normal
+    
+    // Se pone abstract en el método y termina en punto y coma
+    public abstract void atacar(); 
+}
+
+public class Zapador extends Soldado {
+    @Override
+    public void atacar() {
+        System.out.println("Pongo un explosivo C4."); // El hijo está OBLIGADO a implementarlo
+    }
+}
+8. La palabra clave final
+
+En métodos: Impide que las clases hijas lo puedan sobrescribir. Frena el polimorfismo para ese método concreto.
+
+En clases: Impide que la clase tenga herederos (no se puede usar extends con ella). Frena la herencia y el polimorfismo por completo.
+
+Ejemplo en la API: La clase String es final. Nadie puede heredar de String en Java para asegurar que su comportamiento inmutable nunca sea saboteado.
+
+9. Las Interfaces en Java
+
+¿Qué son? Son como "contratos" 100% abstractos. (Hasta Java 8, no podían tener nada de código implementado, solo firmas de métodos).
+
+¿Son como clases abstractas? Parecidas, pero con una diferencia vital: una clase abstracta modela "qué ES" un objeto (identidad), mientras que una interfaz modela "qué PUEDE HACER" (capacidad/comportamiento). Además, no tienen atributos de estado (solo constantes).
+
+Múltiples interfaces: Sí. Aunque en Java no puedes heredar de dos clases (extends), sí puedes implementar docenas de interfaces a la vez (class MiClase implements Volador, Nadador).
+
+10. Ejemplo Punto2D, Punto3D y Linea (Polimorfismo e instanceof)
+
+public abstract class Punto {
+    public abstract double calcularDistanciaA(Punto otro);
+}
+
+public class Punto2D extends Punto {
+    private double x, y;
+    public Punto2D(double x, double y) { this.x = x; this.y = y; }
+
+    @Override
+    public double calcularDistanciaA(Punto otro) {
+        if (!(otro instanceof Punto2D)) {
+            throw new IllegalArgumentException("Debe ser un Punto2D");
+        }
+        Punto2D p2 = (Punto2D) otro; // Downcasting
+        return Math.sqrt(Math.pow(p2.x - this.x, 2) + Math.pow(p2.y - this.y, 2));
+    }
+}
+
+public class Punto3D extends Punto {
+    private double x, y, z;
+    public Punto3D(double x, double y, double z) { this.x=x; this.y=y; this.z=z; }
+
+    @Override
+    public double calcularDistanciaA(Punto otro) {
+        if (!(otro instanceof Punto3D)) {
+            throw new IllegalArgumentException("Debe ser un Punto3D");
+        }
+        Punto3D p3 = (Punto3D) otro; // Downcasting
+        return Math.sqrt(Math.pow(p3.x - this.x, 2) + Math.pow(p3.y - this.y, 2) + Math.pow(p3.z - this.z, 2));
+    }
+}
+
+public class Linea {
+    private Punto p1, p2;
+    // La línea recibe Puntos, le da igual si son 2D o 3D (Polimorfismo puro)
+    public Linea(Punto p1, Punto p2) { this.p1 = p1; this.p2 = p2; }
+
+    public double getLongitud() {
+        return p1.calcularDistanciaA(p2); // Ligadura dinámica al rescate
+    }
+}
+11. Herencia de interfaces
+
+¿Qué es? Al igual que una clase hereda de otra, una interfaz puede extender a otra interfaz para hacer el contrato más grande.
+
+Herencia múltiple de interfaces: Sí existe en Java. Una interfaz puede heredar de varias interfaces a la vez (interface C extends A, B).
+
+Ejemplo:
+
+public interface Fichero {
+    String leer();
+}
+
+// Esta interfaz hereda el método leer() y añade dos más
+public interface FicheroEscribible extends Fichero {
+    void escribir(String contenido);
+    void eliminar();
+}
