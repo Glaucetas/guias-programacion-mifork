@@ -1,20 +1,32 @@
 1. Polimorfismo y Sobrescritura
 
-Polimorfismo: Proviene del griego "muchas formas". En programación, es la capacidad de tratar objetos de distintas clases "hijas" a través de una referencia de su clase "padre" común, y que al llamar a un método, cada objeto responda de la forma específica en que fue programado. Sirve para escribir código genérico y extensible (ej. un bucle que mueve cientos de figuras geométricas distintas sin saber exactamente qué figura es cada una).
+-Polimorfismo: Proviene del griego "muchas formas". En programación, es la capacidad de tratar objetos de distintas clases "hijas" a través de una referencia de su clase "padre" común, 
+y que al llamar a un método, cada objeto responda de la forma específica en que fue programado. Sirve para escribir código genérico y extensible (ej. un bucle que mueve cientos de figuras 
+geométricas distintas sin saber exactamente qué figura es cada una).
 
-Sobrescritura (Overriding): Es el mecanismo que hace posible el polimorfismo. Consiste en que una clase hija vuelve a escribir un método que ya existía en su clase padre (con exactamente el mismo nombre y parámetros) para cambiar o adaptar su comportamiento.
+-Sobrescritura (Overriding): Es el mecanismo que hace posible el polimorfismo. Consiste en que una clase hija vuelve a escribir un método que ya existía en su clase padre 
+(con exactamente el mismo nombre y parámetros) para cambiar o adaptar su comportamiento.
+
+---clase---
+Polimorfismo: 
+    -Objetivo, extender programas de forma más sencilla y segura, por el que las modificaciones vienen principlamente añadiendo nuevas clases, antes que tocando el código de  
+las clases existentes.
+    -Mecanismos en java, Sobreescitura de métodos, clases abstractas (con sus métodos abstractos), ineterfaces.
 
 2. Ligadura Dinámica (Enlace Tardío)
 
-¿Qué es? Cuando el compilador ve soldado.saludar(), no sabe qué código ejecutar porque soldado podría ser un Artillero o un Zapador. La "ligadura dinámica" significa que el programa espera hasta el tiempo de ejecución (cuando el programa ya está corriendo) para mirar qué objeto hay realmente en la memoria y enlazar la llamada a la versión correcta del método.
+¿Qué es? Cuando el compilador ve soldado.saludar(), no sabe qué código ejecutar porque soldado podría ser un Artillero o un Zapador. La "ligadura dinámica" significa que el programa 
+espera hasta el tiempo de ejecución (cuando el programa ya está corriendo) para mirar qué objeto hay realmente en la memoria y enlazar la llamada a la versión correcta del método.
 
 C++ vs Java vs Python:
 
 Java: La ligadura dinámica viene activada "por defecto" para todos los métodos (salvo que sean static, final o private).
 
-C++: Hay que pedirla explícitamente. Si no pones la palabra clave virtual delante del método en la clase padre, C++ usará ligadura estática (ejecutará siempre el método del padre, arruinando el polimorfismo).
+C++: Hay que pedirla explícitamente. Si no pones la palabra clave virtual delante del método en la clase padre, C++ usará ligadura estática (ejecutará siempre el método del padre, 
+arruinando el polimorfismo).
 
-Python: Es puramente dinámico por naturaleza ("Duck typing"). Ni siquiera le importan las jerarquías de clases estables; si el objeto en memoria tiene un método con ese nombre en tiempo de ejecución, lo ejecuta.
+Python: Es puramente dinámico por naturaleza ("Duck typing"). Ni siquiera le importan las jerarquías de clases estables; si el objeto en memoria tiene un método con ese nombre en
+tiempo de ejecución, lo ejecuta.
 
 3. Ejemplo básico de Polimorfismo
 
@@ -73,10 +85,12 @@ Sobrescritura: Misma firma, ocurre entre Padre e Hijo (Herencia).
 
 Sobrecarga: Mismo nombre pero distintos parámetros, ocurre dentro de la misma clase.
 
-@Override: Es una anotación (una etiqueta) para el compilador. Si te equivocas al escribir el nombre (ej. pones saludarr()), sin la etiqueta Java pensará que estás creando un método nuevo. Con la etiqueta, el compilador te dará error avisando: "Oye, dijiste que ibas a sobrescribir algo del padre, pero no lo encuentro".
+@Override: Es una anotación (una etiqueta) para el compilador. Si te equivocas al escribir el nombre (ej. pones saludarr()), sin la etiqueta Java pensará que estás creando un método nuevo.
+Con la etiqueta, el compilador te dará error avisando: "Oye, dijiste que ibas a sobrescribir algo del padre, pero no lo encuentro".
 
 6. Polimorfismo desde el día 1 en Java
-Sí. Como todas las clases en Java heredan de Object, cuando sobrescribes el método toString() de tu clase, estás usando polimorfismo. Cuando haces System.out.println(miObjeto), el sistema usa una referencia de tipo Object para llamar al método toString() de tu clase específica gracias a la ligadura dinámica.
+Sí. Como todas las clases en Java heredan de Object, cuando sobrescribes el método toString() de tu clase, estás usando polimorfismo. Cuando haces System.out.println(miObjeto), 
+el sistema usa una referencia de tipo Object para llamar al método toString() de tu clase específica gracias a la ligadura dinámica.
 
 7. Clases y Métodos Abstractos
 
@@ -98,6 +112,10 @@ public class Zapador extends Soldado {
         System.out.println("Pongo un explosivo C4."); // El hijo está OBLIGADO a implementarlo
     }
 }
+
+---clase---
+Las clases abstractas no se pueden instanciar, porque tendran métodos sin implementar.
+
 8. La palabra clave final
 
 En métodos: Impide que las clases hijas lo puedan sobrescribir. Frena el polimorfismo para ese método concreto.
@@ -110,9 +128,34 @@ Ejemplo en la API: La clase String es final. Nadie puede heredar de String en Ja
 
 ¿Qué son? Son como "contratos" 100% abstractos. (Hasta Java 8, no podían tener nada de código implementado, solo firmas de métodos).
 
-¿Son como clases abstractas? Parecidas, pero con una diferencia vital: una clase abstracta modela "qué ES" un objeto (identidad), mientras que una interfaz modela "qué PUEDE HACER" (capacidad/comportamiento). Además, no tienen atributos de estado (solo constantes).
+¿Son como clases abstractas? Parecidas, pero con una diferencia vital: una clase abstracta modela "qué ES" un objeto (identidad), mientras que una interfaz modela "qué PUEDE HACER" 
+(capacidad/comportamiento). Además, no tienen atributos de estado (solo constantes).
 
 Múltiples interfaces: Sí. Aunque en Java no puedes heredar de dos clases (extends), sí puedes implementar docenas de interfaces a la vez (class MiClase implements Volador, Nadador).
+
+---clase---
+interfaces: 
+    -No tienen estado(atributos)
+    -Todos (En versiones mas recientes Java 8 se permite dar código en los métodos de la interfaz, palabra clave:default) los métodos son sin código(abstractos)
+    -Una clase puede implementar varias interfaces.
+
+public interface EntradaSalida {
+    public String leerEntrada();
+    public void EscribirEnSalida(String texto);
+}
+
+public class PantallaTeclado implements EntradaSalida{
+    private Scanner sc;
+    @Override
+    public String leerEntrada(){
+        return sc.nextLine();
+    }
+
+    @Override
+    public void EscribirEnSalida(String texto){
+        System.out.println(texto);
+    }
+}
 
 10. Ejemplo Punto2D, Punto3D y Linea (Polimorfismo e instanceof)
 
