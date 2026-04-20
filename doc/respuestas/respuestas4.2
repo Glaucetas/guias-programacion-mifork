@@ -139,7 +139,12 @@ public class Zapador extends Soldado {
 
 ¿Qué ocurre en Java? Sí, existe. Se llama java.lang.Object. Todas las clases en Java, lo escribas o no, heredan implícitamente de Object.
 
-8. Herencia Múltiple.
+---clase---
+clase Object
+toString(): String 
+equals(Object): boolean
+
+8. Herencia Múltiple
 
 Definición: Ocurre cuando una clase puede heredar directamente de dos o más superclases a la vez (ej. class Anfibio extends Vehiculo, Barco).
 
@@ -164,13 +169,24 @@ public class UsuarioNoEncontradoException extends RuntimeException {
 
     public Usuario getUsuarioProblematico() { return usuarioProblematico; }
 }
+
+---clase---
+extends Exception (excepción controlada)
+extends RuntimeException (Excepción no controlada)
+
 10. Herencia vs Composición: Reutilización simple.
 
 ¿Por qué no usar herencia solo para reutilizar código? Porque la herencia crea un acoplamiento extremo. Si haces que Coche herede de Motor solo para no reescribir los métodos de encender y apagar, estás afirmando lógicamente que "Un coche ES un motor". Esto es falso y expondrá métodos del motor directamente en el coche, rompiendo el modelo de dominio.
 
+---clase---
+Herencia impone una dependencia muy fuerte de las clases que heredan respecto a la clase base. 
+
 11. Herencia vs Composición: Favorecer composición.
 
 Se debe favorecer la composición porque es más flexible. La herencia es estática (se define en tiempo de compilación). La composición permite cambiar el comportamiento en tiempo de ejecución (puedes cambiarle el motor a un coche mientras el programa corre, pero no puedes cambiar de qué clase hereda). Además, evita crear jerarquías de herencia gigantes y frágiles.
+
+---clase---
+Es menos flexible porque B y C siempre serán un A, mientras que en composición pueden usar A en un momento y otra clase en otro momento, es decir, la referencia de B,C->A puede cambiar durante la ejecución.
 
 12. Herencia vs Composición: "Rompe la encapsulación".
 
