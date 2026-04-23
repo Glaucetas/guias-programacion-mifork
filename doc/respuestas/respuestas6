@@ -83,6 +83,68 @@ public class Estadistica {
         return new Par<Double, Double>(media, desv);
     }
 }
+
+---clase---
+public class Par<P, Q> {
+    private final P primero;
+    private final Q segundo;
+
+    public Par(P primero, Q segundo) {
+        this.primero = primero;
+        this.segundo = segundo;
+    }
+
+    public P getPrimero() { return primero; }
+    public Q getSegundo() { return segundo; }
+}
+
+public class Estadistica {
+    public Par<Double, Double> calcularMediaYDesviacion(double[] datos) {
+        //......
+        double media = 5.5; // Calculado
+        double desv = 1.2; // Calculado
+        return new Par<Double, Double>(media, desv);
+    }
+}
+
+/////////////////////////////////////////
+public class Par {
+    private final Object primero;
+    private final Object segundo;
+
+    public Par(Object primero, Object segundo) {
+        this.primero = primero;
+        this.segundo = segundo;
+    }
+
+    public Object getPrimero() { return primero; }
+    public Object getSegundo() { return segundo; }
+}
+
+public class Estadistica {
+    public Par calcularMediaYDesviacion(List<Double> valores) {
+        //......
+        double media = 5.5; // Calculado
+        double desv = 1.2; // Calculado
+        return new Par(media, desv);
+    }
+}
+
+//Uso de media y desviacion tiica
+List<Double> valores = ...
+Par mediaYDesviacionTipica = mediaYDesviacion(valores);
+double media = (Double) mediaYDesviacionTipica.getPrimero();
+
+Par resutadoAlumno = ...
+Alumno alumno = (Alumno) resultadoAlumno.getPrimero();
+
+////////////////////////////////////////
+
+public class Colegio {
+    public static Par<Alumno, Double> obtenerAlumnosYSusNotas() {
+        
+    }
+}
 8. Métodos genéricos (seleccionaUno)
 
 Con Object:
@@ -96,6 +158,7 @@ Con Parámetros de Tipo (<T>):
 public static <T> T seleccionaUno(T a, T b) { return Math.random() > 0.5 ? a : b; }
 // Ventaja 1: Fuerza mismo tipo. seleccionaUno("Hola", 5) da ERROR de compilación.
 // Ventaja 2: String s = seleccionaUno("A", "B"); // Sin casts, retorna T (String).
+
 9. Restricciones en parámetros (Bounded Types) y Type Erasure
 
 Solución 1: Sin generics (Polimorfismo clásico)
