@@ -1,0 +1,175 @@
+1. Estructura genérica "primitiva" con Object o void*
+En Java, antes de que existieran los genéricos (antes de Java 5), se usaba el polimorfismo de Object para hacer contenedores universales.
+
+public class AlmacenAntiguo {
+    private Object[] elementos = new Object[10];
+    private int tamaño = 0;
+
+    public void añadir(Object o) {
+        elementos[tamaño++] = o;
+    }
+
+    public Object obtener(int indice) {
+        return elementos[indice];
+    }
+}
+2. ¿Qué es la programación genérica? ¿Es lo anterior un ejemplo?
+
+¿Qué es? Es un paradigma donde los algoritmos y estructuras de datos se escriben de forma independiente a los tipos de datos que van a manejar.
+
+¿Es el código anterior genérico? Sí, es una forma básica y primitiva de genericidad (basada en herencia). Permite guardar cualquier cosa, pero lo hace sacrificando 
+totalmente la seguridad de tipos.
+
+3. Problemas de chequeo de tipos con Object
+El gran problema es la pérdida de información y el riesgo en ejecución.
+
+Cast obligatorio (Downcasting): Como el método obtener devuelve un Object, estás obligado a hacer un cast manual: String s = (String) almacen.obtener(0);.
+
+Errores en Tiempo de Ejecución: El compilador te deja meter un Integer en un almacén donde tú creías que solo había Strings. El código compila perfecto, pero al hacer el cast en ejecución,
+el programa explota con una ClassCastException.
+
+4. ¿Qué son los parámetros de tipo?
+Son "variables" que en lugar de almacenar valores (como un int o String), almacenan tipos. Se representan entre ángulos (ej. <T>, <E>). Permiten decirle al compilador: 
+"Voy a crear una estructura para un tipo T. Cuando use la estructura, ya te diré si T es un String, un Integer o un Coche".
+
+5. Ejemplo en Java (Generics) y C++ (Templates)
+
+Java:
+List<String> lista = new ArrayList<String>();
+lista.add("Hola");
+// lista.add(5); // ERROR de compilación (¡Seguridad!)
+for (String s : lista) {
+    System.out.println(s); // No hay cast, s es 100% String
+}
+C++:
+#include <vector>
+#include <string>
+#include <iostream>
+
+std::vector<std::string> lista;
+lista.push_back("Hola");
+for (std::string s : lista) {
+    std::cout << s << std::endl;
+}
+
+6. Type Erasure (Java) vs Instanciación de Plantillas (C++)
+
+C++ (Plantillas/Templates): Cuando creas un vector<string> y un vector<int>, el compilador de C++ genera literalmente dos clases distintas en el código máquina. Es rapidísimo, 
+pero aumenta el tamaño del ejecutable (Code Bloat).
+
+Java (Type Erasure / Borrado de Tipos): Java hace "trampa". Para el compilador, <T> existe y verifica que no metas la pata. Pero al generar el Bytecode, Java borra los genéricos y 
+los sustituye por Object (añadiendo los casts ocultos por ti). En ejecución, solo existe una clase ArrayList, no sabe si era de Strings o de Integers.
+
+7. Clase genérica Par<T, U>
+
+public class Par<T, U> {
+    private T primero;
+    private U segundo;
+
+    public Par(T primero, U segundo) {
+        this.primero = primero;
+        this.segundo = segundo;
+    }
+
+    public T getPrimero() { return primero; }
+    public U getSegundo() { return segundo; }
+}
+
+// Ejemplo de uso
+public class Estadistica {
+    public Par<Double, Double> calcularMediaYDesviacion(double[] datos) {
+        double media = 5.5; // Calculado
+        double desv = 1.2; // Calculado
+        return new Par<Double, Double>(media, desv);
+    }
+}
+8. Métodos genéricos (seleccionaUno)
+
+Con Object:
+
+public static Object seleccionaUnoObject(Object a, Object b) { return Math.random() > 0.5 ? a : b; }
+// Problema 1: Puedes mezclar tipos: seleccionaUnoObject("Hola", 5) compila.
+// Problema 2: Requiere downcasting: String s = (String) seleccionaUnoObject("A", "B");
+
+Con Parámetros de Tipo (<T>):
+
+public static <T> T seleccionaUno(T a, T b) { return Math.random() > 0.5 ? a : b; }
+// Ventaja 1: Fuerza mismo tipo. seleccionaUno("Hola", 5) da ERROR de compilación.
+// Ventaja 2: String s = seleccionaUno("A", "B"); // Sin casts, retorna T (String).
+9. Restricciones en parámetros (Bounded Types) y Type Erasure
+
+Solución 1: Sin generics (Polimorfismo clásico)
+
+public class PuntoClasico {
+    private Number x, y; // Acepta Integer, Double, Float...
+    public PuntoClasico(Number x, Number y) { this.x = x; this.y = y; }
+}
+Solución 2: Con generics (<T extends Number>)
+
+public class PuntoGenerico<T extends Number> {
+    private T x, y;
+    public PuntoGenerico(T x, T y) { this.x = x; this.y = y; }
+}
+Type Erasure aquí: Como le hemos dicho que T extiende de Number, tras compilar, el borrado de tipos no lo sustituye por Object, sino por Number.
+
+10. Reflexión sobre las soluciones anteriores
+
+PuntoClasico: Permite hacer new PuntoClasico(5, 3.14) (mezcla un Integer con un Double). Su método getX() devuelve Number, obligándote a castear si quieres recuperar el tipo original.
+
+PuntoGenerico: Si defines PuntoGenerico<Integer>, obliga a que ambas coordenadas sean estrictamente Integer. Su método getX() devolverá un Integer directo y limpio.
+
+11. Ejemplo avanzado: Interfaces Genéricas Autoreferenciadas
+Para evitar el instanceof y obligar a que la distancia sea solo entre puntos del MISMO tipo, pasamos el propio tipo como parámetro a la interfaz.
+
+// La interfaz recibe un tipo T que DEBE ser un Punto
+public interface Punto<T extends Punto<T>> { 
+    public double distanciaA(T p); 
+} 
+
+// Punto2D se pasa a sí mismo como parámetro de la interfaz
+public class Punto2D implements Punto<Punto2D> { 
+     private final double x, y; 
+     public Punto2D(double x, double y) { this.x = x; this.y = y; } 
+
+    @Override 
+    // Ahora recibe directamente un Punto2D, ¡adiós instanceof y casting!
+    public double distanciaA(Punto2D p) { 
+        return Math.sqrt(Math.pow(x - p.x, 2) + Math.pow(y - p.y, 2)); 
+    } 
+}
+12. Invarianza vs Covarianza (Arrays vs Listas)
+
+Arrays (Covariantes): String[] SÍ es subtipo de Object[]. Esto es un fallo histórico de Java. Permite hacer Object[] arr = new String[5]; arr[0] = 5;. Compila, pero al ejecutar 
+lanza ArrayStoreException porque un array de Strings no puede guardar un 5.
+
+Listas (Invariantes): List<String> NO es subtipo de List<Object>. Java lo prohíbe en compilación para protegerte. Si no lo prohibiera, podrías meter un Integer en una lista de Strings 
+usando la referencia List<Object>.
+
+Covariante: Si A hereda de B, Caja<A> hereda de Caja<B>.
+
+Contravariante: Si A hereda de B, Caja<B> hereda de Caja<A> (al revés).
+
+Invariante: No hay relación de herencia entre las cajas, aunque la haya entre sus contenidos.
+
+13. Wildcards (? extends y ? super)
+Un wildcard (?) es un "comodín".
+
+? extends T (Límite superior - Covarianza): Significa "cualquier tipo que sea T o hijo de T". Solo sirve para LEER.
+
+// Recibe List<Integer>, List<Double>...
+public double sumar(List<? extends Number> lista) {
+    double total = 0;
+    for (Number n : lista) { // Puedo leer como Number seguro
+        total += n.doubleValue();
+    }
+    // lista.add(3); // ERROR! No sé si es una lista de Double, Integer no encajaría.
+    return total;
+}
+? super T (Límite inferior - Contravarianza): Significa "cualquier tipo que sea T o padre de T". Solo sirve para ESCRIBIR.
+
+// Recibe List<Integer>, List<Number>, List<Object>...
+public void addEnteros(List<? super Integer> lista) {
+    lista.add(5); // Seguro, porque sé que el contenedor admite al menos Integers.
+    lista.add(10);
+    // Integer i = lista.get(0); // ERROR! No sé si la lista me devuelve Object o Number.
+}
