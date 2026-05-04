@@ -1,0 +1,247 @@
+TEMA 7. Aspectos funcionales
+
+1. Puntero a función en C
+
+¿Qué es? Es una variable que, en lugar de almacenar un dato (como un número o texto), almacena la dirección de memoria donde se encuentra el código de una función. 
+Permite invocar funciones dinámicamente y pasarlas como parámetros.
+
+#include <stdio.h>
+#include <ctype.h>
+
+// 1. Definimos la función
+void convertirMayusculas(char* str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = toupper(str[i]);
+    }
+}
+
+int main() {
+    char texto[] = "hola mundo";
+    
+    // 2. Creamos el puntero a la función (devuelve void, recibe char*)
+    void (*aMayusculas)(char*) = convertirMayusculas;
+    
+    // 3. La invocamos a través del puntero
+    aMayusculas(texto);
+    
+    printf("%s\n", texto); // Imprime: HOLA MUNDO
+    return 0;
+}
+2. Funciones Lambda (JavaScript y Java)
+
+¿Qué es? Es una función anónima (sin nombre) que se puede definir directamente en el lugar donde se necesita, tratándola como un valor más que se puede asignar a variables o 
+pasar como parámetro.
+
+JavaScript:
+// La función lambda se define con la flecha =>
+const aMayusculas = (texto) => texto.toUpperCase();
+
+console.log(aMayusculas("hola")); // Imprime: HOLA
+Java:
+import java.util.function.Function;
+
+public class Main {
+    public static void main(String[] args) {
+        // En Java se usa -> para la flecha de la lambda
+        Function<String, String> aMayusculas = texto -> texto.toUpperCase();
+        
+        System.out.println(aMayusculas.apply("hola")); // Imprime: HOLA
+    }
+}
+3. El Paradigma Funcional y Java multiparadigma
+
+Paradigma funcional: Es un estilo de programación declarativo donde el código se construye evaluando funciones matemáticas puras, evitando cambiar el estado interno y la mutación de datos.
+Se centra en "qué hacer" en lugar de "cómo hacerlo" paso a paso.
+
+Multiparadigma (Java 8+): Se le llama así porque tradicionalmente Java era 100% Orientado a Objetos (estado encapsulado, herencia), pero desde Java 8 incorporó lambdas, permitiendo 
+mezclar el diseño orientado a objetos con la potencia y brevedad del paradigma funcional.
+
+Ciudadanos de primera clase: Significa que una función puede tratarse igual que una variable normal: puede asignarse a una variable, pasarse como argumento a otra función, y ser 
+devuelta por otra función.
+
+4. Sintaxis básica en Java
+La sintaxis se divide en tres partes: (Parámetros) -> { Cuerpo de la función }
+
+Parámetros: Si es uno solo, los paréntesis son opcionales: x -> ...
+
+Flecha: -> (El operador lambda).
+
+Cuerpo: Si es una sola instrucción, las llaves y el return son implícitos/opcionales: x -> x * 2. Si hay varias líneas, requiere llaves y return: x -> { int y = x*2; return y; }.
+
+5. Pasar funciones como parámetros (transformar)
+
+JavaScript:
+function transformar(texto, funcionTransformadora) {
+    return funcionTransformadora(texto);
+}
+const aMayusculas = (t) => t.toUpperCase();
+console.log(transformar("hola", aMayusculas)); // HOLA
+
+Java:
+public class TransformadorTexto {
+    public static String transformar(String texto, Function<String, String> operacion) {
+        return operacion.apply(texto); // Ejecutamos la función recibida
+    }
+
+    public static void main(String[] args) {
+        Function<String, String> aMayusculas = t -> t.toUpperCase();
+        System.out.println(transformar("hola", aMayusculas)); // HOLA
+    }
+}
+6. Definir la lambda directamente en la llamada
+En lugar de guardarla en una variable, la escribimos al vuelo ("inline").
+
+// Invertir cadena usando StringBuilder
+String invertida = transformar("hola", texto -> new StringBuilder(texto).reverse().toString());
+System.out.println(invertida); // aloh
+7. Closures en Java
+
+¿Qué es un Closure (cierre)? Es la capacidad que tiene una función lambda de "recordar" y acceder a las variables locales del entorno (método) donde fue definida, 
+incluso si ese método ya ha terminado de ejecutarse.
+
+public class Main {
+    public static void main(String[] args) {
+        String prefijo = "[AVISO] "; // Variable local fuera de la lambda
+        
+        // La lambda "captura" (hace closure de) la variable 'prefijo'
+        Function<String, String> añadirPrefijo = texto -> prefijo + texto;
+        
+        System.out.println(añadirPrefijo.apply("Error de conexión")); 
+        // Imprime: [AVISO] Error de conexión
+    }
+}
+Nota importante en Java: La variable capturada (prefijo) debe ser "efectivamente final" (su valor no puede reasignarse después de crear la lambda).
+
+8. Diferencia principal: Lambdas vs Punteros en C
+La diferencia abismal es el Closure. Un puntero a función en C solo apunta a una porción de código estático; no puede capturar el estado local de donde fue creado. 
+Una función lambda es código + su entorno léxico (las variables locales que captura), lo que la hace muchísimo más potente.
+
+9. Devolver funciones (Fábrica de funciones)
+
+public class FabricaDescuentos {
+    // Método que devuelve una función lambda
+    public static Function<Double, Double> crearDescuento(double porcentaje) {
+        // Closure: La lambda "captura" la variable local 'porcentaje'
+        return precio -> precio - (precio * (porcentaje / 100.0));
+    }
+
+    public static void main(String[] args) {
+        Function<Double, Double> descuentoBlackFriday = crearDescuento(50.0);
+        Function<Double, Double> descuentoSocio = crearDescuento(10.0);
+
+        System.out.println(descuentoBlackFriday.apply(100.0)); // 50.0
+        System.out.println(descuentoSocio.apply(100.0)); // 90.0
+    }
+}
+Explicación del closure: Cuando ejecutamos descuentoBlackFriday.apply(), el método crearDescuento ya terminó hace tiempo, pero la lambda sigue recordando el 50.0 que se le pasó.
+
+10. ¿Qué es una interfaz funcional?
+En Java, las funciones no son objetos puros. Por eso, el compilador disfraza las lambdas como implementaciones anónimas de interfaces.
+
+Definición: Es una interfaz que tiene UN Y SOLO UN método abstracto.
+
+Puede tener la anotación @FunctionalInterface (opcional, pero recomendada) para que el compilador avise si añades un segundo método por error.
+
+11. Crear una interfaz funcional a mano
+
+@FunctionalInterface
+public interface Transformador {
+    String transformar(String texto); // Único método abstracto
+}
+
+// Uso: Transformador aMayus = t -> t.toUpperCase();
+12. Interfaz genérica y redondeo
+
+@FunctionalInterface
+public interface Transformador<T, R> {
+    R transformar(T entrada);
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // T es Double, R es Integer
+        Transformador<Double, Integer> redondear = numero -> (int) Math.round(numero);
+        
+        System.out.println(redondear.transformar(5.8)); // Imprime 6
+    }
+}
+13. Interfaces funcionales predefinidas en Java (API java.util.function)
+Java ya nos da hechas las interfaces más comunes:
+
+Function<T, R>: Recibe T, devuelve R (transforma).
+
+Consumer<T>: Recibe T, no devuelve nada (consume datos, ej. imprimir).
+
+Supplier<T>: No recibe nada, devuelve T (proveedor/fábrica).
+
+Predicate<T>: Recibe T, devuelve boolean (filtro/condición).
+
+UnaryOperator<T>: Recibe T, devuelve T (caso especial de Function).
+
+14. Uso de forEach
+El método forEach de las listas espera un Consumer.
+
+List<Integer> numeros = Arrays.asList(-2, 5, 0, 8, -1);
+
+numeros.forEach(num -> {
+    if (num > 0) {
+        System.out.println(num + " es positivo");
+    }
+});
+15. PECS y Genéricos en Lambdas
+
+Por qué Consumer<? super T>: Imagina que tienes una List<Perro>. Según PECS (Producer Extends, Consumer Super), el forEach consume elementos. Si usara Consumer<Perro>, solo podrías pasar lambdas que acepten Perro. Al usar ? super T, permite que pases un Consumer<Animal> para imprimir los perros, haciéndolo mucho más flexible.
+
+PECS en nuestro transformar:
+
+// El texto origen es consumido (super), el resultado es producido (extends)
+public static <T, R> R transformar(T entrada, Function<? super T, ? extends R> operacion) {
+    return operacion.apply(entrada);
+}
+16. Referencias a métodos (Method References)
+En lugar de escribir una lambda tonta como p -> p.saludar(), puedes referenciar el método directamente.
+
+JavaScript:
+
+class Persona { saludar() { console.log("Hola"); } }
+let p = new Persona();
+let refSaludar = p.saludar.bind(p); // JS necesita enlazar el contexto (bind)
+refSaludar();
+Java:
+
+public class Persona {
+    public void saludar() { System.out.println("Hola"); }
+}
+// Main:
+Persona p = new Persona();
+Runnable refSaludar = p::saludar; // Operador :: (Method Reference)
+refSaludar.run();
+17. Tipos de referencias en Java (::)
+
+Método estático: Math::max (Equivale a (x, y) -> Math.max(x, y))
+
+Constructor: Persona::new (Equivale a () -> new Persona())
+
+Instancia concreta: System.out::println (Llama al método del objeto concreto out)
+
+Instancia arbitraria: String::toUpperCase (Equivale a (s) -> s.toUpperCase())
+
+18. Ordenación compleja (Collections.sort)
+
+Versión Manual (con Lambda pura):
+
+List<Persona> lista = Arrays.asList(new Persona("Ana", 30), new Persona("Zoe", 30), new Persona("Leo", 25));
+
+Collections.sort(lista, (p1, p2) -> {
+    if (p1.getEdad() != p2.getEdad()) {
+        return Integer.compare(p1.getEdad(), p2.getEdad()); // Menor a mayor edad
+    }
+    return p1.getNombre().compareTo(p2.getNombre()); // Alfabético si empatan
+});
+Versión Expresiva (con Comparator y Method References):
+
+// Código infinitamente más limpio y legible gracias al paradigma funcional
+Collections.sort(lista, 
+    Comparator.comparingInt(Persona::getEdad)
+              .thenComparing(Persona::getNombre)
+);
