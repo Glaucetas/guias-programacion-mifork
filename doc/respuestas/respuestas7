@@ -27,6 +27,17 @@ int main() {
     printf("%s\n", texto); // Imprime: HOLA MUNDO
     return 0;
 }
+
+---clase---
+Funcional:
+    Objetivo: Que las funciones sean "ciudadanos de primero clase", es decir, sean un tipo/valor mas;
+        1.Pueden ser asignados a variables.
+        2.pueden ser recibidas como parametros
+        3.Pueden ser devuletas en otras funciones
+    Expresiones lambda expresa un valor de tipo funcion; -> no tiene nombre, solo cabecera y cuerpo
+    Closures
+    En lenguajes con comprobación estática de tipos (ej:Java, c#, TypeScript) ¿Qué tipo tienen?
+
 2. Funciones Lambda (JavaScript y Java)
 
 ¿Qué es? Es una función anónima (sin nombre) que se puede definir directamente en el lugar donde se necesita, tratándola como un valor más que se puede asignar a variables o 
@@ -134,6 +145,22 @@ public class FabricaDescuentos {
     }
 }
 Explicación del closure: Cuando ejecutamos descuentoBlackFriday.apply(), el método crearDescuento ya terminó hace tiempo, pero la lambda sigue recordando el 50.0 que se le pasó.
+
+---clase---
+closure: Una expresión lambda captura valors del contexto donde ES DECLARADA.
+public static Function<Double, Double> crearDescuento(int descuento){
+    return cantidad->cantidad*(1-descuento/100);
+}
+
+public static void main() {
+    Funtion<Double, Double> decuento25 = crearDescuento(25);
+    Function<Double, Double> descuento30 = crearDescuento(30);
+    .
+    .
+    .
+    double reducido1 = decuentos25.apply(500);
+    double reducido2 = desceuento30.apply(800);
+}
 
 10. ¿Qué es una interfaz funcional?
 En Java, las funciones no son objetos puros. Por eso, el compilador disfraza las lambdas como implementaciones anónimas de interfaces.
